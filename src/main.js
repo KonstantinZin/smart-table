@@ -25,9 +25,18 @@ function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
     const rowsPerPage = parseInt(state.rowsPerPage);    
     const page = parseInt(state.page ?? 1);   
-     const total = [];
+    
+    // Формируем массив для total
+    const total = [];
     if (state.totalFrom) total[0] = parseFloat(state.totalFrom);
     if (state.totalTo) total[1] = parseFloat(state.totalTo);
+    
+    // Для totalFrom нужно указать и верхнюю границу (бесконечность)
+    if (total.length === 1) {
+        // Если есть только нижняя граница, верхняя = бесконечность
+        total[1] = Infinity;
+    }
+    
     return {
         ...state,
         rowsPerPage,
@@ -36,13 +45,13 @@ function collectState() {
     };
 }
 
+
 /**
  * Перерисовка состояния таблицы при любых изменениях
  * @param {HTMLButtonElement?} action
  */
 function render(action) {
     let state = collectState(); // состояние полей из таблицы
-     console.log('СЫРОЙ STATE ИЗ ФОРМЫ:', state);  // ← добавить
     let result = [...data]; // копируем для последующего изменения
     // @todo: использование
     result = applyPagination(result, state, action);
