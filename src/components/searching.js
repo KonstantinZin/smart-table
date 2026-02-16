@@ -1,4 +1,4 @@
-import {rules, createComparison,} from "../lib/compare.js";
+import {rules, createComparison} from "../lib/compare.js";
 
 
 export function initSearching(searchField) {
@@ -7,6 +7,9 @@ export function initSearching(searchField) {
        [ rules.searchMultipleFields(searchField, ['date', 'customer', 'seller'], false)]);
     return (data, state, action) => {
         // @todo: #5.2 — применить компаратор
+        if(!state[searchField]) {
+            return data;
+        }
         return data.filter(row => search(row, state));
     }
 }
