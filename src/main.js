@@ -24,16 +24,15 @@ const {data, ...indexes} = initData(sourceData);
 function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
     const rowsPerPage = parseInt(state.rowsPerPage);    
-    const page = parseInt(state.page ?? 1);
-     const totalFrom = parseFloat(state.totalFrom) || undefined;  
-    const totalTo = parseFloat(state.totalTo) || undefined;      
-
+    const page = parseInt(state.page ?? 1);   
+     const total = [];
+    if (state.totalFrom) total[0] = parseFloat(state.totalFrom);
+    if (state.totalTo) total[1] = parseFloat(state.totalTo);
     return {
         ...state,
         rowsPerPage,
         page,
-        totalFrom,
-        totalTo
+        total: total.length ? total : undefined
     };
 }
 
@@ -43,6 +42,7 @@ function collectState() {
  */
 function render(action) {
     let state = collectState(); // состояние полей из таблицы
+     console.log('СЫРОЙ STATE ИЗ ФОРМЫ:', state);  // ← добавить
     let result = [...data]; // копируем для последующего изменения
     // @todo: использование
     result = applyPagination(result, state, action);
@@ -81,7 +81,7 @@ const applySorting = initSorting([        // Нам нужно передать 
 const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
     searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
 });
-const applySearching = initSearching(sampleTable.search.elements.search, 
+const applySearching = initSearching('search', 
     ['date', 'customer', 'seller']
 );
 
